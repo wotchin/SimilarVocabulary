@@ -1,0 +1,9 @@
+dog
+cat
+beijing
+tom
+morocco
+database
+computer
+doctor
+geek

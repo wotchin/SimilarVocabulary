@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 import spacy
 
-def family_check(word1,word2):
-    if len(word1) < len(word2):
-        return word2.find(word1)
-    else:
-        return word1.find(word2)
-
-if __name__ == '__main__':
+def getFunc():
     words = ""
     f = open('20k.txt')
     line = f.read() 
@@ -22,7 +16,6 @@ if __name__ == '__main__':
     print("modal loaded.")
     tokens = nlp(words)
 
-
     threshold = 0.0
     while threshold <= 0.0:
         try:
@@ -36,11 +29,16 @@ if __name__ == '__main__':
     except:
         length = 3
 
-    while True:
+    def family_check(word1,word2):
+        if len(word1) < len(word2):
+            return word2.find(word1)
+        else:
+            return word1.find(word2)
+
+    def inner(w):
         queue = [] #[['dog',0.1],['cat',0.2]...]
-        i = input("input your word:")
-        if i != "":
-            txt = nlp(i)
+        if w != "":
+            txt = nlp(w)
             for token in tokens:
                 score = token.similarity(txt)
                 if score >= threshold and family_check(txt.text.strip(),token.text.strip()) < 0:
@@ -56,6 +54,26 @@ if __name__ == '__main__':
 
                     else:
                         queue.append([token.text,score])
+        return queue
 
-        print(queue)
+    return inner 
 
+
+if __name__ == '__main__':
+    getSimilar = getFunc()
+    path_in = input("input your file path:")
+    path_out = input("input output file path:")
+    file_in = open(path_in)
+    file_out = open(path_out,'w+')
+
+    line = file_in.readline()
+    while True:
+        if line is not "":
+            file_out.write(str(getSimilar(line)) + "\n")
+            line = file_in.readline()
+        else:
+            break
+
+    file_in.close()
+    file_out.flush()
+    file_out.close()
